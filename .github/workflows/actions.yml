@@ -1,6 +1,7 @@
 name: Daily NYS Jobs
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '0 9 * * *'
 
@@ -29,7 +30,7 @@ jobs:
           PASSWORD: ${{ secrets.PASSWORD }}
         run: |
           python main.py
-          
+
       - name: commit files
         run: |
           git config --local user.email "action@github.com"
