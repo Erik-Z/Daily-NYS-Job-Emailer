@@ -34,7 +34,7 @@ jobs:
       - name: commit files
         run: |
           git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          git config --local user.name "github-actions[bot]"
           git add -A
           git diff-index --quiet HEAD || (git commit -a -m "updated jobs.xml" --allow-empty)
           
@@ -42,4 +42,4 @@ jobs:
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: master
+          branch: ${{ github.ref }}
