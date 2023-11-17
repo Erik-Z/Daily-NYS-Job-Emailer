@@ -27,21 +27,6 @@ def load_xml_file(input_file):
     return root
 
 
-def get_most_recent_friday():
-    tz = timezone("US/Eastern")
-    current_date = datetime.now(tz=tz).date()
-    days_to_subtract = (current_date.weekday() - 4) % 7  # Calculate days to the most recent Friday
-    most_recent_friday = current_date - timedelta(days=days_to_subtract)
-    return most_recent_friday
-
-
-def is_update_needed(pub_date_str):
-    tz = timezone("US/Eastern")
-    current_date = datetime.now(tz=tz).date()
-    pub_date = parser.parse(pub_date_str, tzinfos={"EST": -5*3600}).date()
-    return pub_date < current_date
-
-
 if __name__ == "__main__":
     url = "https://statejobs.ny.gov/rss/employeerss.cfm"
     xml_file = "jobs.xml"
@@ -49,24 +34,14 @@ if __name__ == "__main__":
     root = load_xml_file(xml_file)
 
     if root.findall(".//item"):
-        latest_pub_date = root.findall(".//item/pubDate")[1].text
-        if is_update_needed(latest_pub_date):
-            website_data = fetch_data_from_website(url)
-            if website_data == None: 
-                print("No website data")
-                exit()
-            create_xml_file(website_data, xml_file)
-            print(f"XML file '{xml_file}' updated successfully.")
-        else:
-            print(f"No update needed. Using existing XML file.")
-    else:
         website_data = fetch_data_from_website(url)
-        if website_data:
-            create_xml_file(website_data, xml_file)
-            print(f"XML file '{xml_file}' created successfully.")
+        if website_data == None: 
+            print("No website data")
+            exit()
+        create_xml_file(website_data, xml_file)
+        print(f"XML file '{xml_file}' updated successfully.")
 
-    latest_pub_date = root.findall(".//item/pubDate")[1].text
-    pub_date = parser.parse(latest_pub_date, tzinfos={"EST": -5*3600}).date()
+    latest_current_job = root.findall(".//item/link")[1].text
     root = load_xml_file(xml_file)
 
     port = 465  # For SSL
@@ -78,8 +53,8 @@ if __name__ == "__main__":
     context = ssl.create_default_context()
 
     for job in root.findall(".//item"):
-        if "Information Technology Specialist" not in job[0].text: continue
-        if parser.parse(job.find("pubDate").text, tzinfos={"EST": -5*3600}).date() <= pub_date: continue
+        if job.find('link').text == latest_current_job: break
+        if "Information Technology Specialist" not in job[0].text: continue        
         message += f"{job.find('title').text}\n"
         message += f"{job.find('link').text}\n"
         message += f"{job.find('pubDate').text}\n"
