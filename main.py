@@ -1,10 +1,10 @@
 import os
 import requests
 import xml.etree.ElementTree as ET
-from dateutil import parser
-from datetime import datetime, timedelta
-from pytz import timezone
 import smtplib, ssl
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from datetime import datetime
 
 def fetch_data_from_website(url):
     response = requests.get(url)
@@ -49,18 +49,26 @@ if __name__ == "__main__":
     sender_email = os.getenv('SENDER_EMAIL')
     receiver_email = os.getenv('RECIPIENT_EMAIL')
     password = os.getenv('PASSWORD')
-    message = f"Subject: Job Notification: {datetime.now().date()}\n" 
+    
+    message = MIMEMultipart() 
+    message["From"] = sender_email
+    message["To"] = receiver_email
+    message["Subject"] = f"Subject: Job Notification: {datetime.now().date()}\n"
+    message_body = ""
+    
     context = ssl.create_default_context()
 
     for job in root.findall(".//item"):
         if job.find('link').text == latest_current_job: break
         if "Information Technology Specialist" not in job[0].text: continue        
-        message += f"{job.find('title').text}\n"
-        message += f"{job.find('link').text}\n"
-        message += f"{job.find('pubDate').text}\n"
-        message += f"{job.find('description').text}\n"
-        message += "------------------------------------------------------------------------------------------\n"
+        message_body += f"{job.find('title').text}\n"
+        message_body += f"{job.find('link').text}\n"
+        message_body += f"{job.find('pubDate').text}\n"
+        message_body += f"{job.find('description').text}\n"
+        message_body += "------------------------------------------------------------------------------------------\n"
+
+    message.attach(MIMEText(message_body, "plain", "utf-8"))
 
     with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
         server.login(sender_email, password)
-        server.sendmail(sender_email, receiver_email, message)
+        server.sendmail(sender_email, receiver_email, message.as_string())
