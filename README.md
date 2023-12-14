@@ -32,4 +32,4 @@ After this, it's just installing the requirements and running the script. The **
 
 ### Set Up Scheduling
 
-I am using github actions as a scheduler to send me new job postings everyday. All you need to do is fork this repository and set up you git [secrets](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions).
+I am using github actions as a scheduler to send me new job postings everyday. All you need to do is fork this repository and set up your git [secrets](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions).
