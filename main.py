@@ -1,10 +1,12 @@
 import os
 import requests
+import configparser
 import xml.etree.ElementTree as ET
 import smtplib, ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime
+
 
 def fetch_data_from_website(url):
     response = requests.get(url)
@@ -58,14 +60,19 @@ if __name__ == "__main__":
     
     context = ssl.create_default_context()
 
+    config = configparser.ConfigParser()
+    config.read('config.ini')
+    job_title_keywords = [keyword.strip() for keyword in config.get('JobTitles', 'keywords').split(',')]
+
     for job in root.findall(".//item"):
         if job.find('link').text == latest_current_job: break
-        if "Information Technology Specialist" not in job[0].text: continue        
-        message_body += f"{job.find('title').text}\n"
-        message_body += f"{job.find('link').text}\n"
-        message_body += f"{job.find('pubDate').text}\n"
-        message_body += f"{job.find('description').text}\n"
-        message_body += "------------------------------------------------------------------------------------------\n"
+        job_title = job[0].text
+        if any(keyword in job_title for keyword in job_title_keywords):       
+            message_body += f"{job.find('title').text}\n"
+            message_body += f"{job.find('link').text}\n"
+            message_body += f"{job.find('pubDate').text}\n"
+            message_body += f"{job.find('description').text}\n"
+            message_body += "------------------------------------------------------------------------------------------\n"
 
     message.attach(MIMEText(message_body, "plain", "utf-8"))
 
