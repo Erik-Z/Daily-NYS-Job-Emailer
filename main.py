@@ -76,7 +76,7 @@ if __name__ == "__main__":
             message_body += "------------------------------------------------------------------------------------------\n"
 
     if not message_body: 
-        println("No new jobs found")
+        print("No new jobs found")
         sys.exit(0)
         
     message.attach(MIMEText(message_body, "plain", "utf-8"))
