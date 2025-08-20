@@ -49,7 +49,7 @@ if __name__ == "__main__":
     port = 465  # For SSL
     smtp_server = "smtp.gmail.com"
     sender_email = os.getenv('SENDER_EMAIL')
-    receiver_email = os.getenv('RECIPIENT_EMAIL')
+    receiver_email = [email.strip() for email in os.getenv('RECIPIENT_EMAIL').split(",") if email.strip()]
     password = os.getenv('PASSWORD')
     
     message = MIMEMultipart() 
