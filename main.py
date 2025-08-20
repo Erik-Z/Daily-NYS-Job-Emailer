@@ -49,12 +49,12 @@ if __name__ == "__main__":
     port = 465  # For SSL
     smtp_server = "smtp.gmail.com"
     sender_email = os.getenv('SENDER_EMAIL')
-    receiver_email = [email.strip() for email in os.getenv('RECIPIENT_EMAIL').split(",") if email.strip()]
+    receiver_emails = [email.strip() for email in os.getenv('RECIPIENT_EMAIL').split(",") if email.strip()]
     password = os.getenv('PASSWORD')
     
     message = MIMEMultipart() 
     message["From"] = sender_email
-    message["To"] = receiver_email
+    message["To"] = ", ".join(receiver_emails)
     message["Subject"] = f"Subject: Job Notification: {datetime.now().date()}\n"
     message_body = ""
     
