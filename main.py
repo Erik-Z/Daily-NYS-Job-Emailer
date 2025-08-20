@@ -74,7 +74,7 @@ if __name__ == "__main__":
             message_body += f"{job.find('description').text}\n"
             message_body += "------------------------------------------------------------------------------------------\n"
 
-    if !message_body: 
+    if not message_body: 
         println("No new jobs found")
         return
         
