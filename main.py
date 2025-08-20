@@ -1,6 +1,7 @@
 import os
 import requests
 import configparser
+import sys
 import xml.etree.ElementTree as ET
 import smtplib, ssl
 from email.mime.text import MIMEText
@@ -76,7 +77,7 @@ if __name__ == "__main__":
 
     if not message_body: 
         println("No new jobs found")
-        return
+        sys.exit(0)
         
     message.attach(MIMEText(message_body, "plain", "utf-8"))
     with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
