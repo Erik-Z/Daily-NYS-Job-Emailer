@@ -55,27 +55,30 @@ if __name__ == "__main__":
     message = MIMEMultipart() 
     message["From"] = sender_email
     message["To"] = ", ".join(receiver_emails)
-    message["Subject"] = f"Subject: Job Notification: {datetime.now().date()}\n"
+    message["Subject"] = f"Job Notification: {datetime.now().date()}"
     message_body = ""
     
     context = ssl.create_default_context()
 
     config = configparser.ConfigParser()
     config.read('config.ini')
-    job_title_keywords = [keyword.strip() for keyword in config.get('JobTitles', 'keywords').split(',')]
+    job_title_keywords = [keyword.strip() for keyword in config.get('JobTitles', 'keywords').split(',') if keyword.strip()]
 
     for job in root.findall(".//item"):
         if job.find('link').text == latest_current_job: break
         job_title = job[0].text
-        if any(keyword in job_title for keyword in job_title_keywords):       
+        if any(keyword.lower() in job_title.lower() for keyword in job_title_keywords):       
             message_body += f"{job.find('title').text}\n"
             message_body += f"{job.find('link').text}\n"
             message_body += f"{job.find('pubDate').text}\n"
             message_body += f"{job.find('description').text}\n"
             message_body += "------------------------------------------------------------------------------------------\n"
 
+    if !message_body: 
+        println("No new jobs found")
+        return
+        
     message.attach(MIMEText(message_body, "plain", "utf-8"))
-
     with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
         server.login(sender_email, password)
         server.sendmail(sender_email, receiver_emails, message.as_string())
