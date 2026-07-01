@@ -35,6 +35,8 @@ After this, it's just installing the requirements and running the script. The **
 I am using github actions as a scheduler to send me new job postings everyday. All you need to do is fork this repository and set up your git [secrets](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions).
 
 Make sure the SENDER_EMAIL, RECIPIENT_EMAIL and PASSWORD environment variables are in the action secrets for this to work with Github actions.
+
+
 <img width="491" height="345" alt="image" src="https://github.com/user-attachments/assets/17c5f61e-9699-4661-962e-f2c95d269923" />
 
 ### Configuring Job Title
