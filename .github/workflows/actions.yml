@@ -8,15 +8,18 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
+    permissions:
+      contents: write
 
+    steps:
       - name: checkout repo content
-        uses: actions/checkout@v2 # checkout the repository content to github runner
+        uses: actions/checkout@v4 # checkout the repository content to github runner
 
       - name: setup python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.11.1' # install the python version needed
+          python-version: '3.11'
+          cache: 'pip'
       
       - name: install python packages
         run: |
@@ -38,8 +41,8 @@ jobs:
           git add -A
           git diff-index --quiet HEAD || (git commit -a -m "updated jobs.xml" --allow-empty)
           
-      - name: push changes
-        uses: ad-m/github-push-action@master
+      - name: Commit and push database
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref }}
+          commit_message: "chore: update jobs history database"
+          file_pattern: "*.db"
