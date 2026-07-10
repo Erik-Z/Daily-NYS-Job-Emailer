@@ -33,13 +33,6 @@ jobs:
           PASSWORD: ${{ secrets.PASSWORD }}
         run: |
           python main.py
-
-      - name: commit files
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "github-actions[bot]"
-          git add -A
-          git diff-index --quiet HEAD || (git commit -a -m "updated jobs.xml" --allow-empty)
           
       - name: Commit and push database
         uses: stefanzweifel/git-auto-commit-action@v5
